@@ -7,7 +7,10 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsup",
     "start": "node dist/server.js",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "db:migrate": "tsx scripts/ingest.ts migrate",
+    "ingest": "tsx scripts/ingest.ts ingest",
+    "document:delete": "tsx scripts/ingest.ts delete"
   },
   "dependencies": {
     "@verascribe/contracts": "0.1.0",
@@ -15,7 +18,11 @@
     "express": "^5.2.1",
     "express-rate-limit": "^8.7.0",
     "helmet": "^8.3.0",
+    "mdast-util-to-string": "^4.0.0",
+    "pg": "^8.23.1",
     "pino": "^10.3.1",
-    "pino-http": "^11.0.0"
+    "pino-http": "^11.0.0",
+    "remark-parse": "^11.0.0",
+    "unified": "^11.0.5"
   }
 }

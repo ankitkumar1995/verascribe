@@ -46,3 +46,7 @@ Evidence support will represent verified-claim coverage, not a probability of tr
 - [Vite setup](https://vite.dev/guide/)
 - [Express 5](https://expressjs.com/en/guide/migrating-5/)
 - [Ollama embeddings](https://docs.ollama.com/api/embed)
+
+## Markdown ingestion
+
+The ingestion CLI is implemented. See [setup, commands, and limits](docs/ingestion.md).

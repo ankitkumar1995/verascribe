@@ -1,0 +1,17 @@
+name: verascribe
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    ports: ['127.0.0.1:54329:5432']
+    environment:
+      POSTGRES_DB: verascribe
+      POSTGRES_USER: verascribe
+      POSTGRES_PASSWORD: local-development-only
+    volumes: [postgres-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U verascribe -d verascribe']
+      interval: 2s
+      timeout: 3s
+      retries: 20
+volumes:
+  postgres-data:
