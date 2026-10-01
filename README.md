@@ -50,3 +50,7 @@ Evidence support will represent verified-claim coverage, not a probability of tr
 ## Markdown ingestion
 
 The ingestion CLI is implemented. See [setup, commands, and limits](docs/ingestion.md).
+
+## Hybrid retrieval
+
+Search indexed documents with vector and full-text ranking. See [commands and evaluation](docs/retrieval.md).

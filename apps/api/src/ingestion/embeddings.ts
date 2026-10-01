@@ -16,7 +16,11 @@ export function validateVectors(vectors: number[][], expected: number): void {
   )
     throw new Error('Invalid embedding dimensions, count, or values');
 }
-export class OllamaEmbedder implements Embedder {
+export interface QueryEmbedder {
+  readonly model: string;
+  embedQuery(question: string): Promise<number[]>;
+}
+export class OllamaEmbedder implements Embedder, QueryEmbedder {
   constructor(
     readonly model = 'nomic-embed-text',
     private readonly baseUrl = 'http://127.0.0.1:11434',
@@ -24,13 +28,21 @@ export class OllamaEmbedder implements Embedder {
     private readonly timeoutMs = 30_000,
   ) {}
   async embed(texts: string[]): Promise<number[][]> {
+    return this.embedForTask(texts, 'search_document');
+  }
+  async embedQuery(question: string): Promise<number[]> {
+    const vectors = await this.embedForTask([question], 'search_query');
+    return vectors[0]!;
+  }
+  private async embedForTask(
+    texts: string[],
+    task: 'search_document' | 'search_query',
+  ): Promise<number[][]> {
     const vectors: number[][] = [];
     for (let offset = 0; offset < texts.length; offset += 16) {
       const batch = texts.slice(offset, offset + 16);
       const input = batch.map((text) =>
-        this.model.startsWith('nomic-embed-text')
-          ? 'search_document: ' + text
-          : text,
+        this.model.startsWith('nomic-embed-text') ? task + ': ' + text : text,
       );
       const response = await this.request(new URL('/api/embed', this.baseUrl), {
         method: 'POST',

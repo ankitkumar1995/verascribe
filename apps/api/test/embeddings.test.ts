@@ -44,3 +44,27 @@ describe('Ollama boundary', () => {
     ).rejects.toThrow('Embedding provider request failed (500)');
   });
 });
+
+it('uses the query task prefix for Nomic searches', async () => {
+  const request = vi.fn<typeof fetch>(async (_url, init) => {
+    expect(JSON.parse(String(init?.body)).input).toEqual([
+      'search_query: question',
+    ]);
+    return new Response(JSON.stringify({ embeddings: [vector] }));
+  });
+  expect(
+    await new OllamaEmbedder('nomic-embed-text', undefined, request).embedQuery(
+      'question',
+    ),
+  ).toEqual(vector);
+});
+
+it('does not add Nomic-specific prefixes to other models', async () => {
+  const request = vi.fn<typeof fetch>(async (_url, init) => {
+    expect(JSON.parse(String(init?.body)).input).toEqual(['question']);
+    return new Response(JSON.stringify({ embeddings: [vector] }));
+  });
+  await new OllamaEmbedder('another-model', undefined, request).embedQuery(
+    'question',
+  );
+});

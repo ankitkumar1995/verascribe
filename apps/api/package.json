@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "db:migrate": "tsx scripts/ingest.ts migrate",
     "ingest": "tsx scripts/ingest.ts ingest",
-    "document:delete": "tsx scripts/ingest.ts delete"
+    "document:delete": "tsx scripts/ingest.ts delete",
+    "search": "tsx scripts/search.ts",
+    "eval:retrieval": "tsx scripts/evaluate-retrieval.ts"
   },
   "dependencies": {
     "@verascribe/contracts": "0.1.0",

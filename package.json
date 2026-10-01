@@ -21,7 +21,9 @@
     "check": "npm run typecheck && npm run lint && npm run format:check && npm test && npm run build",
     "db:migrate": "npm run db:migrate -w @verascribe/api",
     "ingest": "npm run ingest -w @verascribe/api --",
-    "document:delete": "npm run document:delete -w @verascribe/api --"
+    "document:delete": "npm run document:delete -w @verascribe/api --",
+    "search": "npm run search -w @verascribe/api --",
+    "eval:retrieval": "npm run eval:retrieval -w @verascribe/api"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
