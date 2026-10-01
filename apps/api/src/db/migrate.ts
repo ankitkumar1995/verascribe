@@ -22,7 +22,10 @@ export async function migrate(pool: Pool) {
       .filter((name) => name.endsWith('.sql'))
       .sort();
     for (const name of files) {
-      const sql = await readFile(new URL(name, directory), 'utf8');
+      const sql = (await readFile(new URL(name, directory), 'utf8')).replace(
+        /\r\n/g,
+        '\n',
+      );
       const checksum = createHash('sha256').update(sql).digest('hex');
       const prior = await client.query<{ checksum: string }>(
         'SELECT checksum FROM verascribe.schema_migrations WHERE name = $1',
