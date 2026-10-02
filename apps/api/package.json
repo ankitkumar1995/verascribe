@@ -12,9 +12,11 @@
     "ingest": "tsx scripts/ingest.ts ingest",
     "document:delete": "tsx scripts/ingest.ts delete",
     "search": "tsx scripts/search.ts",
-    "eval:retrieval": "tsx scripts/evaluate-retrieval.ts"
+    "eval:retrieval": "tsx scripts/evaluate-retrieval.ts",
+    "rerank:smoke": "tsx scripts/rerank-smoke.ts"
   },
   "dependencies": {
+    "@huggingface/transformers": "^4.3.0",
     "@verascribe/contracts": "0.1.0",
     "dotenv": "^18.0.5",
     "express": "^5.2.1",

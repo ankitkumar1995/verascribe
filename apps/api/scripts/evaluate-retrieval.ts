@@ -13,9 +13,13 @@ import {
   scoreRetrieval,
   summarizeEvaluation,
 } from '../src/retrieval/evaluation.js';
+import { createReranker, readRerankConfig } from '../src/reranking/config.js';
+import {
+  compareReranking,
+  summarizeComparison,
+} from '../src/reranking/evaluation.js';
 
 async function main() {
-  // A separate explicit URL prevents accidental writes to the app database.
   const config = z
     .object({
       EVAL_DATABASE_URL: z.string().url(),
@@ -31,6 +35,13 @@ async function main() {
       ),
     ),
   );
+  const rerankConfig = readRerankConfig();
+  const reranker = rerankConfig.RERANK_ENABLED
+    ? createReranker(rerankConfig)
+    : undefined;
+  const topK = rerankConfig.RERANK_TOP_K;
+  const comparisons: Awaited<ReturnType<typeof compareReranking>>[] = [];
+  let modelLoadMs = 0;
   const pool = new Pool({
     connectionString: config.EVAL_DATABASE_URL,
     max: 3,
@@ -46,6 +57,11 @@ async function main() {
   const namespace = 'eval-' + randomUUID() + ':';
   const sourceKeys = dataset.documents.map((doc) => namespace + doc.key);
   try {
+    if (reranker) {
+      const loadStart = performance.now();
+      await reranker.prepare();
+      modelLoadMs = performance.now() - loadStart;
+    }
     for (const document of dataset.documents) {
       await ingestMarkdown(
         {
@@ -68,21 +84,36 @@ async function main() {
         embedder,
       );
       const candidates = result.candidates.map((hit) => ({
+        ...hit,
         sourceKey: hit.sourceKey.slice(namespace.length),
       }));
       rows.push({
-        ...scoreRetrieval(testCase, candidates),
-        durationMs: Math.round(performance.now() - start),
+        ...scoreRetrieval(testCase, candidates, topK),
+        durationMs: performance.now() - start,
       });
+      if (reranker)
+        comparisons.push(
+          await compareReranking(testCase, candidates, reranker, topK),
+        );
     }
     console.log(
       JSON.stringify(
         {
           model: embedder.model,
-          cutoff: 5,
-          note: 'Document recall over the first five chunks; unanswerable cases are diagnostic only, not an abstention test.',
+          cutoff: topK,
+          note: 'Recall is measured over top-k chunks. Unanswerable cases are diagnostic only. Reranking comparisons use the same candidates. Inference latency excludes model loading; the first call may include warmup.',
           summary: summarizeEvaluation(rows),
           results: rows,
+          reranking: reranker
+            ? {
+                enabled: true,
+                model: reranker.model,
+                revision: reranker.revision,
+                modelLoadMs,
+                comparison: summarizeComparison(comparisons),
+                results: comparisons,
+              }
+            : { enabled: false },
         },
         null,
         2,
@@ -98,13 +129,17 @@ async function main() {
         );
       }
     } finally {
-      await pool.end();
+      try {
+        await reranker?.dispose();
+      } finally {
+        await pool.end();
+      }
     }
   }
 }
 main().catch(() => {
   console.error(
-    'Evaluation failed. Use a migrated disposable EVAL_DATABASE_URL and a running Ollama embedding model. Cleanup may require removing eval-prefixed fixtures after a database outage.',
+    'Evaluation failed. Use a migrated disposable EVAL_DATABASE_URL, a running Ollama model, and a valid reranker cache/network configuration. A database outage may require cleaning eval-prefixed fixtures.',
   );
   process.exitCode = 1;
 });

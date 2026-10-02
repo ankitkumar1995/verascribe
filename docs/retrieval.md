@@ -39,7 +39,7 @@ potentially sensitive document content.
 
 RRF scores are ranking signals, not confidence or evidence-support probabilities.
 Dense search can return candidates for unanswerable questions. Abstention belongs
-to the later verification feature. Reranking and query rewriting are deferred.
+to the later verification feature. Reranking is now enabled by default; see [reranking setup](reranking.md). Query rewriting remains deferred.
 A source filter is an admin selection tool, not authorization: a future authenticated
 endpoint must derive allowed sources from server-side access controls.
 
