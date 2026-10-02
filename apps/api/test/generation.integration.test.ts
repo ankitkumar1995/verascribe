@@ -16,6 +16,11 @@ import { answerDraft } from '../src/generation/pipeline.js';
 import { LocalNliVerifier } from '../src/guardrails/nli.js';
 import { answerVerified } from '../src/guardrails/pipeline.js';
 
+import request from 'supertest';
+import { pino } from 'pino';
+import { createApp } from '../src/app.js';
+import { createQueryService } from '../src/query/service.js';
+
 const databaseUrl = process.env.TEST_DATABASE_URL;
 describe.skipIf(!databaseUrl)(
   'draft pipeline with real database and controlled provider HTTP',
@@ -175,6 +180,40 @@ describe.skipIf(!databaseUrl)(
         expect(result.citations[0]?.sourceUrl).toBe(
           'https://example.com/passwords',
         );
+      },
+      120000,
+    );
+    it.skipIf(process.env.RUN_MODEL_TESTS !== 'true')(
+      'serves a verified answer through HTTP',
+      async () => {
+        mode = 'valid';
+        const service = createQueryService(
+          (input, signal) =>
+            answerVerified(
+              { ...input, sourceKeys: [key] },
+              { ...dependencies(), verifier },
+              {},
+              signal,
+            ),
+          async () => {},
+        );
+        try {
+          const response = await request(
+            createApp(pino({ level: 'silent' }), service),
+          )
+            .post('/query')
+            .send({ question: 'When do password reset links expire?' });
+          expect(response.status).toBe(200);
+          expect(response.body.status).toBe('supported');
+          expect(response.body.citations[0].sourceUrl).toBe(
+            'https://example.com/passwords',
+          );
+          expect(response.body.answer).toBe(
+            'Password reset links expire after 30 minutes. [1]',
+          );
+        } finally {
+          await service.close();
+        }
       },
       120000,
     );
