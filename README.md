@@ -34,7 +34,7 @@ Serve the web build behind a same-origin reverse proxy for `/api` in production.
 ## Working agreement
 
 Use one branch per feature and keep commits scoped. Dependent branches may be
-stacked; their pull requests target the preceding branch until it merges.
+stacked locally; pull requests target main and identify any unmerged dependencies.
 Do not commit credentials, private source documents, or generated model files.
 Run `npm run check` before opening a pull request. Main remains the reviewed baseline.
 
@@ -61,4 +61,4 @@ Search now selects the best five passages using a local cross-encoder. See [mode
 
 ## Citation-backed drafts
 
-Generate answers with validated source references using the [draft generation CLI](docs/generation.md). Drafts remain unverified until the claim-verification phase.
+Generate answers with validated source references using the [draft generation CLI](docs/generation.md). This debugging command returns unverified drafts. Use the [verified answer CLI](docs/guardrails.md) for answers filtered against cited evidence.

@@ -35,7 +35,8 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: .local/models
-          key: reranker-${{ runner.os }}-a09144355adeed5f58c8ed011d209bf8ee5a1fec-q8
+          key: verification-2a4f614a701367a02d51389039afc998faeda637-${{ runner.os }}-a09144355adeed5f58c8ed011d209bf8ee5a1fec-q8
       - run: npm ci
       - run: npm run rerank:smoke
+      - run: npm run verify:smoke
       - run: npm run check

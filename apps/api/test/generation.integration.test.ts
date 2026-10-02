@@ -13,6 +13,9 @@ import {
 import { GroqGenerator } from '../src/generation/groq.js';
 import { answerDraft } from '../src/generation/pipeline.js';
 
+import { LocalNliVerifier } from '../src/guardrails/nli.js';
+import { answerVerified } from '../src/guardrails/pipeline.js';
+
 const databaseUrl = process.env.TEST_DATABASE_URL;
 describe.skipIf(!databaseUrl)(
   'draft pipeline with real database and controlled provider HTTP',
@@ -35,6 +38,7 @@ describe.skipIf(!databaseUrl)(
       score: async (_question, passages) =>
         passages.map(() => ({ score: 1, truncated: false })),
     };
+    const verifier = new LocalNliVerifier();
     let server: Server;
     let baseUrl: string;
     let mode: 'valid' | 'invalid-citation' | 'slow-body' = 'valid';
@@ -119,6 +123,7 @@ describe.skipIf(!databaseUrl)(
           server.close((error) => (error ? reject(error) : resolve())),
         );
       try {
+        await verifier.dispose();
         await realReranker?.dispose();
         await store.delete(key);
       } finally {
@@ -150,6 +155,29 @@ describe.skipIf(!databaseUrl)(
         text: 'Password reset links expire after 30 minutes.',
       });
     }, 30000);
+    it.skipIf(process.env.RUN_MODEL_TESTS !== 'true')(
+      'verifies the complete pipeline',
+      async () => {
+        mode = 'valid';
+        const result = await answerVerified(
+          {
+            question: 'When do password reset links expire?',
+            sourceKeys: [key],
+          },
+          { ...dependencies(), verifier },
+        );
+        expect(result.status).toBe('supported');
+        expect(result.confidence).toBe(1);
+        expect(result.verification.returnedClaims).toBe(1);
+        expect(result.answer).toBe(
+          'Password reset links expire after 30 minutes. [1]',
+        );
+        expect(result.citations[0]?.sourceUrl).toBe(
+          'https://example.com/passwords',
+        );
+      },
+      120000,
+    );
     it('fails closed when the provider fabricates a citation', async () => {
       mode = 'invalid-citation';
       await expect(
