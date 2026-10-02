@@ -3,10 +3,10 @@
 | Phase               | Branch                     | Acceptance criteria                                                 | Status      |
 | ------------------- | -------------------------- | ------------------------------------------------------------------- | ----------- |
 | Foundation          | `chore/project-foundation` | Workspaces, contracts, health API, React shell, CI                  | Implemented |
-| Markdown ingestion  | `feat/markdown-ingestion`  | Semantic chunks, Ollama, migrations, atomic replace/delete, tests   | Next        |
-| Hybrid retrieval    | `feat/hybrid-retrieval`    | Vector + full-text, RRF, evaluation dataset                         | Planned     |
-| Reranking           | `feat/evidence-reranking`  | Cross-encoder adapter, top-k, latency and recall comparison         | Planned     |
-| Citation generation | `feat/citation-generation` | Provider adapter, context-only prompt, validated markers            | Planned     |
+| Markdown ingestion  | `feat/markdown-ingestion`  | Semantic chunks, Ollama, migrations, atomic replace/delete, tests   | Implemented |
+| Hybrid retrieval    | `feat/hybrid-retrieval`    | Vector + full-text, RRF, evaluation dataset                         | Implemented |
+| Reranking           | `feat/evidence-reranking`  | Cross-encoder adapter, top-k, latency and recall comparison         | Implemented |
+| Citation generation | `feat/citation-generation` | Provider adapter, context-only prompt, validated markers            | Implemented |
 | Claim verification  | `feat/claim-verification`  | Atomic claims, NLI, fail-closed gate, calibrated thresholds         | Planned     |
 | Question workspace  | `feat/question-workspace`  | Query endpoint, accessible UI, sources, support indicator           | Planned     |
 | PDF and URLs        | `feat/additional-sources`  | Page citations, parsing limits, safe URL fetching                   | Planned     |
