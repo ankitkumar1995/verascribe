@@ -257,8 +257,14 @@ export function App() {
                     [{source.id}] {source.title}
                   </h3>
                   <p className="source-meta">
-                    Version {source.version} · Lines {source.metadata.startLine}
-                    –{source.metadata.endLine}
+                    Version {source.version} ·{' '}
+                    {source.metadata.page
+                      ? 'Page ' + source.metadata.page + ' · '
+                      : ''}
+                    {source.metadata.lineBasis === 'extracted'
+                      ? 'Extracted lines '
+                      : 'Lines '}
+                    {source.metadata.startLine}–{source.metadata.endLine}
                   </p>
                   {source.metadata.headings.length > 0 && (
                     <p className="source-meta">

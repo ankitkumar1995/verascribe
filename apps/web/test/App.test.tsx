@@ -149,6 +149,29 @@ describe('question workspace', () => {
     expect(await screen.findByRole('alert')).toBeTruthy();
     expect(screen.queryByText('unsafe')).toBeNull();
   });
+  it('shows PDF page references and distinguishes extracted lines', async () => {
+    const { user } = setup(async () =>
+      Response.json({
+        ...evidence,
+        citations: [
+          {
+            ...evidence.citations[0],
+            metadata: {
+              headings: [],
+              startLine: 2,
+              endLine: 4,
+              page: 3,
+              lineBasis: 'extracted',
+            },
+          },
+        ],
+      }),
+    );
+    await ask(user);
+    expect(
+      await screen.findByText('Version 2 · Page 3 · Extracted lines 2–4'),
+    ).toBeTruthy();
+  });
   it('only links credential-free HTTP(S) source URLs', () => {
     for (const url of [
       'javascript:alert(1)',

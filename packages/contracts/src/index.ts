@@ -22,16 +22,21 @@ export type QueryResponse = z.infer<typeof queryResponseSchema>;
 
 export const FALLBACK_ANSWER =
   "I don't have enough information to answer that.";
+export const chunkMetadataSchema = z.object({
+  headings: z.array(z.string()),
+  startLine: z.number().int().positive(),
+  endLine: z.number().int().positive(),
+  page: z.number().int().positive().optional(),
+  lineBasis: z.enum(['source', 'extracted']).optional(),
+});
+export type ChunkMetadata = z.infer<typeof chunkMetadataSchema>;
+
 export const draftCitationSchema = citationSchema.extend({
   id: z.number().int().positive(),
   documentId: z.string().uuid(),
   title: z.string(),
   version: z.number().int().positive(),
-  metadata: z.object({
-    headings: z.array(z.string()),
-    startLine: z.number().int().positive(),
-    endLine: z.number().int().positive(),
-  }),
+  metadata: chunkMetadataSchema,
 });
 export const draftAnswerSchema = z.discriminatedUnion('status', [
   z
