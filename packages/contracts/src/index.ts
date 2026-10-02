@@ -61,3 +61,37 @@ export const draftAnswerSchema = z.discriminatedUnion('status', [
     .strict(),
 ]);
 export type DraftAnswer = z.infer<typeof draftAnswerSchema>;
+
+export const verifiedAnswerSchema = queryResponseSchema
+  .extend({
+    citations: z.array(draftCitationSchema),
+    claims: z.array(
+      z.object({
+        text: z.string().min(1),
+        citationIds: z.array(z.number().int().positive()).min(1),
+      }),
+    ),
+    verification: z.object({
+      model: z.string(),
+      revision: z.string(),
+      entailmentThreshold: z.number().min(0.5).max(1),
+      minimumSupportRatio: z.number().min(0.5).max(1),
+      assessedClaims: z.number().int().nonnegative(),
+      supportedClaims: z.number().int().nonnegative(),
+      returnedClaims: z.number().int().nonnegative(),
+      assessments: z.array(
+        z.object({
+          claimIndex: z.number().int().nonnegative(),
+          outcome: z.enum([
+            'entailed',
+            'contradicted',
+            'not_entailed',
+            'input_too_long',
+          ]),
+        }),
+      ),
+    }),
+    note: z.string().nullable(),
+  })
+  .strict();
+export type VerifiedAnswer = z.infer<typeof verifiedAnswerSchema>;

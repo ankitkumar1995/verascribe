@@ -25,7 +25,10 @@
     "search": "npm run search -w @verascribe/api --",
     "eval:retrieval": "npm run eval:retrieval -w @verascribe/api",
     "rerank:smoke": "npm run rerank:smoke -w @verascribe/api",
-    "generate": "npm run generate -w @verascribe/api --"
+    "generate": "npm run generate -w @verascribe/api --",
+    "verify:smoke": "npm run verify:smoke -w @verascribe/api",
+    "answer": "npm run answer -w @verascribe/api --",
+    "eval:verification": "npm run eval:verification -w @verascribe/api"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

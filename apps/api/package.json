@@ -14,7 +14,10 @@
     "search": "tsx scripts/search.ts",
     "eval:retrieval": "tsx scripts/evaluate-retrieval.ts",
     "rerank:smoke": "tsx scripts/rerank-smoke.ts",
-    "generate": "tsx scripts/generate.ts"
+    "generate": "tsx scripts/generate.ts",
+    "verify:smoke": "tsx scripts/verify-smoke.ts",
+    "answer": "tsx scripts/answer.ts",
+    "eval:verification": "tsx scripts/evaluate-verification.ts"
   },
   "dependencies": {
     "@huggingface/transformers": "^4.3.0",

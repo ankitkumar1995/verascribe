@@ -7,7 +7,7 @@
 | Hybrid retrieval    | `feat/hybrid-retrieval`    | Vector + full-text, RRF, evaluation dataset                         | Implemented |
 | Reranking           | `feat/evidence-reranking`  | Cross-encoder adapter, top-k, latency and recall comparison         | Implemented |
 | Citation generation | `feat/citation-generation` | Provider adapter, context-only prompt, validated markers            | Implemented |
-| Claim verification  | `feat/claim-verification`  | Atomic claims, NLI, fail-closed gate, calibrated thresholds         | Planned     |
+| Claim verification  | `feat/claim-verification`  | Sentence claims, local NLI, fail-closed gate, seed evaluation       | Implemented |
 | Question workspace  | `feat/question-workspace`  | Query endpoint, accessible UI, sources, support indicator           | Planned     |
 | PDF and URLs        | `feat/additional-sources`  | Page citations, parsing limits, safe URL fetching                   | Planned     |
 | Release hardening   | `feat/release-hardening`   | Evaluation, deployment, provider failures, authorization if private | Planned     |
@@ -23,3 +23,4 @@
 - PostgreSQL full-text ranking is not BM25.
 - Verify model availability and hosting limits before release.
 - Add authentication and retrieval authorization before exposing private documents.
+  Claim verification uses sentence units and initial thresholds. Domain calibration and broader compound-claim evaluation remain release-hardening requirements.
