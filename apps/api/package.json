@@ -13,7 +13,8 @@
     "document:delete": "tsx scripts/ingest.ts delete",
     "search": "tsx scripts/search.ts",
     "eval:retrieval": "tsx scripts/evaluate-retrieval.ts",
-    "rerank:smoke": "tsx scripts/rerank-smoke.ts"
+    "rerank:smoke": "tsx scripts/rerank-smoke.ts",
+    "generate": "tsx scripts/generate.ts"
   },
   "dependencies": {
     "@huggingface/transformers": "^4.3.0",

@@ -19,3 +19,45 @@ export const healthSchema = z.object({
 });
 export type QueryRequest = z.infer<typeof queryRequestSchema>;
 export type QueryResponse = z.infer<typeof queryResponseSchema>;
+
+export const FALLBACK_ANSWER =
+  "I don't have enough information to answer that.";
+export const draftCitationSchema = citationSchema.extend({
+  id: z.number().int().positive(),
+  documentId: z.string().uuid(),
+  title: z.string(),
+  version: z.number().int().positive(),
+  metadata: z.object({
+    headings: z.array(z.string()),
+    startLine: z.number().int().positive(),
+    endLine: z.number().int().positive(),
+  }),
+});
+export const draftAnswerSchema = z.discriminatedUnion('status', [
+  z
+    .object({
+      status: z.literal('draft'),
+      verification: z.literal('pending'),
+      answer: z.string().min(1),
+      claims: z
+        .array(
+          z.object({
+            text: z.string().min(1),
+            citationIds: z.array(z.number().int().positive()).min(1),
+          }),
+        )
+        .min(1),
+      citations: z.array(draftCitationSchema).min(1),
+    })
+    .strict(),
+  z
+    .object({
+      status: z.literal('insufficient_evidence'),
+      verification: z.literal('not_applicable'),
+      answer: z.literal(FALLBACK_ANSWER),
+      claims: z.tuple([]),
+      citations: z.tuple([]),
+    })
+    .strict(),
+]);
+export type DraftAnswer = z.infer<typeof draftAnswerSchema>;

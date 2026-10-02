@@ -58,3 +58,7 @@ Search indexed documents with vector and full-text ranking. See [commands and ev
 ## Evidence reranking
 
 Search now selects the best five passages using a local cross-encoder. See [model setup, configuration, and comparison metrics](docs/reranking.md).
+
+## Citation-backed drafts
+
+Generate answers with validated source references using the [draft generation CLI](docs/generation.md). Drafts remain unverified until the claim-verification phase.

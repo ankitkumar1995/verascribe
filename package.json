@@ -24,7 +24,8 @@
     "document:delete": "npm run document:delete -w @verascribe/api --",
     "search": "npm run search -w @verascribe/api --",
     "eval:retrieval": "npm run eval:retrieval -w @verascribe/api",
-    "rerank:smoke": "npm run rerank:smoke -w @verascribe/api"
+    "rerank:smoke": "npm run rerank:smoke -w @verascribe/api",
+    "generate": "npm run generate -w @verascribe/api --"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
