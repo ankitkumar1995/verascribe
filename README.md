@@ -46,3 +46,15 @@ Evidence support will represent verified-claim coverage, not a probability of tr
 - [Vite setup](https://vite.dev/guide/)
 - [Express 5](https://expressjs.com/en/guide/migrating-5/)
 - [Ollama embeddings](https://docs.ollama.com/api/embed)
+
+## Markdown ingestion
+
+The ingestion CLI is implemented. See [setup, commands, and limits](docs/ingestion.md).
+
+## Hybrid retrieval
+
+Search indexed documents with vector and full-text ranking. See [commands and evaluation](docs/retrieval.md).
+
+## Evidence reranking
+
+Search now selects the best five passages using a local cross-encoder. See [model setup, configuration, and comparison metrics](docs/reranking.md).

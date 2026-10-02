@@ -18,12 +18,20 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
-    "check": "npm run typecheck && npm run lint && npm run format:check && npm test && npm run build"
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm test && npm run build",
+    "db:migrate": "npm run db:migrate -w @verascribe/api",
+    "ingest": "npm run ingest -w @verascribe/api --",
+    "document:delete": "npm run document:delete -w @verascribe/api --",
+    "search": "npm run search -w @verascribe/api --",
+    "eval:retrieval": "npm run eval:retrieval -w @verascribe/api",
+    "rerank:smoke": "npm run rerank:smoke -w @verascribe/api"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/express": "^5.0.6",
+    "@types/mdast": "^4.0.4",
     "@types/node": "^24.19.0",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@types/supertest": "^7.2.1",
