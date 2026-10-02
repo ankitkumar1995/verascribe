@@ -6,6 +6,10 @@ import { DocumentStore } from '../src/ingestion/store.js';
 import { ingestMarkdown } from '../src/ingestion/service.js';
 import type { Embedder } from '../src/ingestion/embeddings.js';
 
+import { ingestParsed } from '../src/sources/ingest.js';
+import { parsePdf } from '../src/sources/parse.js';
+import { makePdf } from './pdf-fixture.js';
+
 const databaseUrl = process.env.TEST_DATABASE_URL;
 describe.skipIf(!databaseUrl)('ingestion with real pgvector', () => {
   const pool = new Pool({
@@ -129,6 +133,45 @@ describe.skipIf(!databaseUrl)('ingestion with real pgvector', () => {
       ).rows[0]?.content,
     ).toContain('Version one');
   });
+  it('stores PDF page provenance, skips duplicates, and preserves versions on failure', async () => {
+    const document = input();
+    const parsed = await parsePdf(
+      makePdf(['Reset links last 30 minutes.', 'Contact support.']),
+    );
+    const source = {
+      ...parsed,
+      sourceKey: document.sourceKey,
+      sourceUrl: 'https://example.com/guide.pdf',
+    };
+    const first = await ingestParsed(source, store, embedder);
+    const duplicate = await ingestParsed(source, store, {
+      ...embedder,
+      embed: async () => {
+        throw new Error('must skip');
+      },
+    });
+    expect(duplicate.status).toBe('skipped');
+    const rows = await pool.query(
+      'SELECT metadata FROM verascribe.chunks WHERE document_id=$1 ORDER BY ordinal',
+      [first.documentId],
+    );
+    expect(rows.rows.map((row) => row.metadata.page)).toEqual([1, 2]);
+    expect(rows.rows[0]?.metadata.lineBasis).toBe('extracted');
+    const updated = {
+      ...source,
+      chunks: [{ ...source.chunks[0]!, content: 'Changed PDF content.' }],
+    };
+    await expect(
+      ingestParsed(updated, store, {
+        ...embedder,
+        embed: async () => {
+          throw new Error('provider');
+        },
+      }),
+    ).rejects.toThrow();
+    expect((await store.find(source.sourceKey))?.version).toBe(1);
+    expect((await ingestParsed(updated, store, embedder)).version).toBe(2);
+  }, 30000);
   it('serializes simultaneous duplicate writes', async () => {
     const document = input();
     const results = await Promise.all([

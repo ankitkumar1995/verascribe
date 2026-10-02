@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { chunkMetadataSchema } from '@verascribe/contracts';
 
 export const retrievalRequestSchema = z
   .object({
@@ -30,11 +31,7 @@ export const sourceChunkSchema = z.object({
   version: z.number().int().positive(),
   ordinal: z.number().int().nonnegative(),
   content: z.string(),
-  metadata: z.object({
-    headings: z.array(z.string()),
-    startLine: z.number().int().positive(),
-    endLine: z.number().int().positive(),
-  }),
+  metadata: chunkMetadataSchema,
 });
 export const rankedChunkSchema = sourceChunkSchema.extend({
   score: z.number().finite(),

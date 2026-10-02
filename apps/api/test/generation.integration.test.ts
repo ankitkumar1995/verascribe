@@ -58,7 +58,13 @@ describe.skipIf(!databaseUrl)(
         chunks: [
           {
             content: 'Password reset links expire after 30 minutes.',
-            metadata: { headings: ['Passwords'], startLine: 1, endLine: 1 },
+            metadata: {
+              headings: ['Passwords'],
+              startLine: 1,
+              endLine: 1,
+              page: 2,
+              lineBasis: 'extracted',
+            },
           },
         ],
         vectors: [vector],
@@ -205,6 +211,10 @@ describe.skipIf(!databaseUrl)(
             .send({ question: 'When do password reset links expire?' });
           expect(response.status).toBe(200);
           expect(response.body.status).toBe('supported');
+          expect(response.body.citations[0].metadata).toMatchObject({
+            page: 2,
+            lineBasis: 'extracted',
+          });
           expect(response.body.citations[0].sourceUrl).toBe(
             'https://example.com/passwords',
           );

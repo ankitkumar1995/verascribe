@@ -1,3 +1,4 @@
+import type { ChunkMetadata } from '@verascribe/contracts';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import { toString } from 'mdast-util-to-string';
@@ -5,7 +6,7 @@ import { toString } from 'mdast-util-to-string';
 export const CHUNKER_VERSION = 'markdown-v1-1800';
 export type TextChunk = {
   content: string;
-  metadata: { headings: string[]; startLine: number; endLine: number };
+  metadata: ChunkMetadata;
 };
 
 export function chunkMarkdown(

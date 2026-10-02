@@ -63,3 +63,7 @@ Search now selects the best five passages using a local cross-encoder. See [mode
 ## Citation-backed drafts
 
 Generate answers with validated source references using the [draft generation CLI](docs/generation.md). This debugging command returns unverified drafts. Use the [verified answer CLI](docs/guardrails.md) for answers filtered against cited evidence.
+
+## PDF and web sources
+
+Import PDFs with page references or public HTTPS pages using the [additional source commands](docs/additional-sources.md).

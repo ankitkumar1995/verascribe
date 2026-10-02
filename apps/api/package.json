@@ -17,16 +17,21 @@
     "generate": "tsx scripts/generate.ts",
     "verify:smoke": "tsx scripts/verify-smoke.ts",
     "answer": "tsx scripts/answer.ts",
-    "eval:verification": "tsx scripts/evaluate-verification.ts"
+    "eval:verification": "tsx scripts/evaluate-verification.ts",
+    "ingest:pdf": "tsx scripts/ingest-source.ts pdf",
+    "ingest:url": "tsx scripts/ingest-source.ts url"
   },
   "dependencies": {
     "@huggingface/transformers": "^4.3.0",
     "@verascribe/contracts": "0.1.0",
+    "cheerio": "^1.2.0",
     "dotenv": "^18.0.5",
     "express": "^5.2.1",
     "express-rate-limit": "^8.7.0",
     "helmet": "^8.3.0",
+    "ipaddr.js": "^2.5.0",
     "mdast-util-to-string": "^4.0.0",
+    "pdfjs-dist": "^6.3.289",
     "pg": "^8.23.1",
     "pino": "^10.3.1",
     "pino-http": "^11.0.0",

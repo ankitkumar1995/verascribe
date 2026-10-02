@@ -9,7 +9,7 @@
 | Citation generation | `feat/citation-generation` | Provider adapter, context-only prompt, validated markers            | Implemented |
 | Claim verification  | `feat/claim-verification`  | Sentence claims, local NLI, fail-closed gate, seed evaluation       | Implemented |
 | Question workspace  | `feat/question-workspace`  | Query endpoint, accessible UI, sources, support indicator           | Implemented |
-| PDF and URLs        | `feat/additional-sources`  | Page citations, parsing limits, safe URL fetching                   | Planned     |
+| PDF and URLs        | `feat/additional-sources`  | Page citations, parsing limits, safe URL fetching                   | Implemented |
 | Release hardening   | `feat/release-hardening`   | Evaluation, deployment, provider failures, authorization if private | Planned     |
 
 ## Design rules
