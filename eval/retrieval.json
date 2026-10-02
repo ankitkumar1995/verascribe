@@ -1,0 +1,96 @@
+{
+  "documents": [
+    {
+      "key": "account-recovery",
+      "markdown": "# Account recovery\n\nReset a forgotten password using the recovery link on the sign-in page. The password reset link expires after 30 minutes."
+    },
+    {
+      "key": "refund-policy",
+      "markdown": "# Refund policy\n\nAnnual subscriptions are refundable within 14 days of purchase. Monthly subscriptions are not refundable."
+    },
+    {
+      "key": "invoice-location",
+      "markdown": "# Invoices\n\nWorkspace administrators can download invoices from Settings > Billing > Invoices. Invoices are generated at the start of each billing period."
+    },
+    {
+      "key": "api-limits",
+      "markdown": "# API limits\n\nThe query API allows 60 requests per minute per IP address. Exceeding the limit returns HTTP 429. Wait before retrying."
+    },
+    {
+      "key": "document-deletion",
+      "markdown": "# Document deletion\n\nDeleting a document also deletes its indexed chunks. Ingestion audit history is retained. Delete a source using its stable source key."
+    },
+    {
+      "key": "ingestion-retries",
+      "markdown": "# Ingestion retries\n\nIf embedding fails, the previous document version stays available. Retry an import by running the ingestion command again. Identical documents are skipped."
+    }
+  ],
+  "cases": [
+    {
+      "id": "password",
+      "question": "How can I reset a forgotten password?",
+      "category": "answerable",
+      "relevantSources": ["account-recovery"]
+    },
+    {
+      "id": "password-paraphrase",
+      "question": "I cannot remember my login secret. How do I regain access?",
+      "category": "answerable",
+      "relevantSources": ["account-recovery"]
+    },
+    {
+      "id": "refund",
+      "question": "Can I get a refund for an annual subscription?",
+      "category": "answerable",
+      "relevantSources": ["refund-policy"]
+    },
+    {
+      "id": "invoice",
+      "question": "Where can an administrator download invoices?",
+      "category": "answerable",
+      "relevantSources": ["invoice-location"]
+    },
+    {
+      "id": "rate-limit",
+      "question": "What should I do after HTTP 429?",
+      "category": "answerable",
+      "relevantSources": ["api-limits"]
+    },
+    {
+      "id": "delete",
+      "question": "What happens to indexed chunks when a document is deleted?",
+      "category": "answerable",
+      "relevantSources": ["document-deletion"]
+    },
+    {
+      "id": "failed-import",
+      "question": "What happens if embedding fails during an import?",
+      "category": "answerable",
+      "relevantSources": ["ingestion-retries"]
+    },
+    {
+      "id": "retry-ambiguous",
+      "question": "How do I retry?",
+      "category": "ambiguous",
+      "relevantSources": ["api-limits", "ingestion-retries"]
+    },
+    {
+      "id": "billing-ambiguous",
+      "question": "Where is the billing information?",
+      "category": "ambiguous",
+      "relevantSources": ["refund-policy", "invoice-location"]
+    },
+    {
+      "id": "unknown-price",
+      "question": "What is the price of the enterprise plan?",
+      "category": "unanswerable",
+      "relevantSources": []
+    },
+    {
+      "id": "unknown-region",
+      "question": "Which countries host the production database?",
+      "category": "unanswerable",
+      "relevantSources": []
+    }
+  ]
+}
