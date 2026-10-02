@@ -89,6 +89,8 @@ describe.skipIf(!databaseUrl)(
             OLLAMA_URL: ollamaUrl,
             EMBEDDING_MODEL: model,
             DOTENV_CONFIG_QUIET: 'true',
+            RERANK_ENABLED:
+              process.env.RUN_MODEL_TESTS === 'true' ? 'true' : 'false',
           },
           timeout: 20000,
         },
@@ -114,6 +116,10 @@ describe.skipIf(!databaseUrl)(
         unanswerableCases: 2,
       });
       expect(report.results).toHaveLength(11);
+      if (process.env.RUN_MODEL_TESTS === 'true') {
+        expect(report.reranking.results).toHaveLength(11);
+        expect(report.reranking.comparison.meanRerankMs).toBeGreaterThan(0);
+      }
       expect(
         received.some((text) => text.startsWith('search_document: ')),
       ).toBe(true);
