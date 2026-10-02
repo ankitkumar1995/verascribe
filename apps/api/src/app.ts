@@ -4,7 +4,9 @@ import helmet from 'helmet';
 import { rateLimit } from 'express-rate-limit';
 import { pinoHttp } from 'pino-http';
 import type { Logger } from 'pino';
-export function createApp(logger: Logger) {
+import { queryRouter } from './query/route.js';
+import type { QueryService } from './query/service.js';
+export function createApp(logger: Logger, service?: QueryService) {
   const app = express();
   app.disable('x-powered-by');
   app.use(helmet());
@@ -43,6 +45,7 @@ export function createApp(logger: Logger) {
     }),
   );
   app.use(express.json({ limit: '16kb' }));
+  app.use(queryRouter(service));
   app.use((_req, res) =>
     res
       .status(404)

@@ -38,8 +38,9 @@ stacked locally; pull requests target main and identify any unmerged dependencie
 Do not commit credentials, private source documents, or generated model files.
 Run `npm run check` before opening a pull request. Main remains the reviewed baseline.
 
-The current UI is a foundation screen, not a functioning Q&A interface.
-Evidence support will represent verified-claim coverage, not a probability of truth.
+The question workspace displays verified answers and traceable source context.
+See [workspace setup](docs/workspace.md) to enable answering. Evidence support measures
+draft claim coverage, not a probability of truth.
 
 ## Technical references
 

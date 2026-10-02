@@ -1,6 +1,6 @@
 # Claim verification
 
-Run `npm run answer -- "When do reset links expire?" [source-key]` after configuring ingestion, retrieval, and Groq as described in [generation](generation.md). This CLI retrieves, reranks, drafts, and verifies before printing an answer. The existing `generate` command remains an unverified debugging tool. The HTTP endpoint and question UI are the next phase.
+Run `npm run answer -- "When do reset links expire?" [source-key]` after configuring ingestion, retrieval, and Groq as described in [generation](generation.md). This CLI retrieves, reranks, drafts, and verifies before printing an answer. The existing `generate` command remains an unverified debugging tool. The [question workspace](workspace.md) exposes this pipeline through the API and browser UI.
 
 ## Evidence gate
 
