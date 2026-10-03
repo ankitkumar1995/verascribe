@@ -13,5 +13,16 @@ services:
       interval: 2s
       timeout: 3s
       retries: 20
+  ollama:
+    image: ollama/ollama@sha256:292ee7945dfc3d5840a181f3ab86fedb1e66703e02c8af98b50f4da56b7e278c
+    profiles: [embeddings]
+    ports: ['127.0.0.1:11434:11434']
+    volumes: [ollama-models:/root/.ollama]
+    healthcheck:
+      test: ['CMD', 'ollama', 'list']
+      interval: 5s
+      timeout: 5s
+      retries: 20
 volumes:
   postgres-data:
+  ollama-models:
