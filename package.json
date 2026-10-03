@@ -30,7 +30,9 @@
     "answer": "npm run answer -w @verascribe/api --",
     "eval:verification": "npm run eval:verification -w @verascribe/api",
     "ingest:pdf": "npm run ingest:pdf -w @verascribe/api --",
-    "ingest:url": "npm run ingest:url -w @verascribe/api --"
+    "ingest:url": "npm run ingest:url -w @verascribe/api --",
+    "demo:doctor": "npm run demo:doctor -w @verascribe/api",
+    "eval:verification:check": "npm run eval:verification -w @verascribe/api -- --check"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

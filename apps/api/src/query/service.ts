@@ -25,6 +25,8 @@ export function createQueryService(
 ): QueryService {
   let active: Promise<VerifiedAnswer> | undefined;
   let closed = false;
+  let closing: Promise<void> | undefined;
+  let activeController: AbortController | undefined;
   return {
     async answer(input, signal) {
       const request = queryRequestSchema.parse(input);
@@ -32,6 +34,7 @@ export function createQueryService(
       if (active) throw new QueryError('BUSY');
       if (signal?.aborted) throw new QueryError('CANCELLED');
       const controller = new AbortController();
+      activeController = controller;
       const cancel = () => controller.abort(new QueryError('CANCELLED'));
       signal?.addEventListener('abort', cancel, { once: true });
       const timer = setTimeout(
@@ -49,7 +52,10 @@ export function createQueryService(
       active = work;
       void work
         .finally(() => {
-          if (active === work) active = undefined;
+          if (active === work) {
+            active = undefined;
+            activeController = undefined;
+          }
         })
         .catch(() => {});
       try {
@@ -60,10 +66,14 @@ export function createQueryService(
         controller.signal.removeEventListener('abort', onAbort);
       }
     },
-    async close() {
+    close() {
       closed = true;
-      await active?.catch(() => {});
-      await dispose();
+      activeController?.abort(new QueryError('UNAVAILABLE'));
+      closing ??= (async () => {
+        await active?.catch(() => {});
+        await dispose();
+      })();
+      return closing;
     },
   };
 }

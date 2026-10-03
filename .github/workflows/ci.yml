@@ -40,3 +40,18 @@ jobs:
       - run: npm run rerank:smoke
       - run: npm run verify:smoke
       - run: npm run check
+      - run: npm audit --audit-level=high
+      - run: node --import tsx apps/api/scripts/evaluate-verification.ts --check
+      - run: docker build -t verascribe-ci .
+      - name: Smoke test release image
+        run: |
+          docker run -d --name verascribe-smoke -p 127.0.0.1:3301:3001 verascribe-ci
+          trap 'docker logs verascribe-smoke; docker rm -f verascribe-smoke' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail http://127.0.0.1:3301/api/health; then break; fi
+            sleep 1
+          done
+          curl --fail http://127.0.0.1:3301/api/health
+          curl --fail http://127.0.0.1:3301/ | grep 'VeraScribe'
+          test "$(curl -s -o /dev/null -w '%{http_code}' -H 'Content-Type: application/json' -d '{"question":"hello"}' http://127.0.0.1:3301/api/query)" = 503
+          test "$(docker exec verascribe-smoke id -u)" != 0

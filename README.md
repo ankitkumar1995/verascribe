@@ -67,3 +67,7 @@ Generate answers with validated source references using the [draft generation CL
 ## PDF and web sources
 
 Import PDFs with page references or public HTTPS pages using the [additional source commands](docs/additional-sources.md).
+
+## Local demo release
+
+See [release setup and remaining work](docs/release.md) for native/Docker packaging, diagnostics, and the final acceptance checklist. This release targets local use.
