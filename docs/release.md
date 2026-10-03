@@ -57,3 +57,5 @@ Before a migration or demo-data replacement, take a PostgreSQL dump of the datab
 | Optional product features                   | Browser uploads, document management UI, and conversation history are not part of the completed core plan.                                                                                                  |
 
 The “near-zero hallucination” framing in the original proposal is not a measured guarantee. Current support scores measure agreement with retrieved evidence, not factual truth.
+
+For local setup without a Groq call, including Docker-based embeddings and a fictional corpus, see [the no-key setup guide](local-setup.md). Live generation acceptance can be deferred while verifying local retrieval.

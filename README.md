@@ -71,3 +71,5 @@ Import PDFs with page references or public HTTPS pages using the [additional sou
 ## Local demo release
 
 See [release setup and remaining work](docs/release.md) for native/Docker packaging, diagnostics, and the final acceptance checklist. This release targets local use.
+
+For a reproducible setup without a generation key, follow [local setup and sample retrieval](docs/local-setup.md).
