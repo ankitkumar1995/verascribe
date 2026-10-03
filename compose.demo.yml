@@ -1,0 +1,34 @@
+name: verascribe-demo
+services:
+  app:
+    build: .
+    ports: ['127.0.0.1:3001:3001']
+    environment:
+      DATABASE_URL: postgresql://verascribe:local-demo-only@db:5432/verascribe
+      OLLAMA_URL: http://host.docker.internal:11434
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-nomic-embed-text}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      GROQ_MODEL: ${GROQ_MODEL:-llama-3.3-70b-versatile}
+      QUERY_ENABLED: ${QUERY_ENABLED:-false}
+      RERANK_LOCAL_FILES_ONLY: 'true'
+      NLI_LOCAL_FILES_ONLY: 'true'
+    extra_hosts: ['host.docker.internal:host-gateway']
+    volumes: ['./.local/models:/app/.local/models:ro']
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: pgvector/pgvector:pg17
+    ports: ['127.0.0.1:54330:5432']
+    environment:
+      POSTGRES_DB: verascribe
+      POSTGRES_USER: verascribe
+      POSTGRES_PASSWORD: local-demo-only
+    volumes: [demo-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U verascribe -d verascribe']
+      interval: 2s
+      timeout: 3s
+      retries: 20
+volumes:
+  demo-data:

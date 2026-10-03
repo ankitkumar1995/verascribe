@@ -19,7 +19,9 @@
     "answer": "tsx scripts/answer.ts",
     "eval:verification": "tsx scripts/evaluate-verification.ts",
     "ingest:pdf": "tsx scripts/ingest-source.ts pdf",
-    "ingest:url": "tsx scripts/ingest-source.ts url"
+    "ingest:url": "tsx scripts/ingest-source.ts url",
+    "demo:doctor": "tsx scripts/doctor.ts",
+    "db:migrate:release": "node dist/migrate.js"
   },
   "dependencies": {
     "@huggingface/transformers": "^4.3.0",

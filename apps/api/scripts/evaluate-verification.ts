@@ -1,18 +1,15 @@
 import 'dotenv/config';
 import { readFile } from 'node:fs/promises';
-import { z } from 'zod';
 import { createVerifierFromEnv } from '../src/guardrails/config.js';
-
-const dataset = z
-  .array(
-    z.object({
-      id: z.string(),
-      premise: z.string(),
-      hypothesis: z.string(),
-      label: z.enum(['entailment', 'contradiction', 'neutral']),
-    }),
-  )
-  .parse(
+import {
+  evaluateVerification,
+  verificationDatasetSchema,
+} from '../src/guardrails/evaluation.js';
+async function main() {
+  const args = process.argv.slice(2);
+  if (args.some((arg) => arg !== '--check'))
+    throw new Error('Invalid arguments');
+  const dataset = verificationDatasetSchema.parse(
     JSON.parse(
       await readFile(
         new URL('../../../eval/verification.json', import.meta.url),
@@ -20,61 +17,44 @@ const dataset = z
       ),
     ),
   );
-const { verifier, policy } = createVerifierFromEnv();
-try {
-  const loadStart = performance.now();
-  await verifier.prepare();
-  const loadMs = performance.now() - loadStart;
-  const start = performance.now();
-  const results = await verifier.verify(
-    dataset.map(({ premise, hypothesis }) => ({ premise, hypothesis })),
-  );
-  const elapsedMs = performance.now() - start;
-  const rows = dataset.map((item, index) => {
-    const result = results[index]!;
-    const predicted =
-      result.status === 'scored'
-        ? Object.entries(result.probabilities).sort(
-            (a, b) => b[1] - a[1],
-          )[0]![0]
-        : 'unverifiable';
-    const accepted =
-      result.status === 'scored' &&
-      predicted === 'entailment' &&
-      result.probabilities.entailment >= policy.entailmentThreshold;
-    return { id: item.id, expected: item.label, predicted, accepted, result };
-  });
-  const trueAccepted = rows.filter(
-    (row) => row.accepted && row.expected === 'entailment',
-  ).length;
-  const accepted = rows.filter((row) => row.accepted).length;
-  const positives = rows.filter((row) => row.expected === 'entailment').length;
-  console.log(
-    JSON.stringify(
-      {
-        model: verifier.model,
-        revision: verifier.revision,
-        policy,
-        loadMs,
-        elapsedMs,
-        summary: {
-          cases: rows.length,
-          labelAccuracy:
-            rows.filter((row) => row.predicted === row.expected).length /
-            rows.length,
-          acceptedPrecision: accepted ? trueAccepted / accepted : null,
-          entailmentRecall: positives ? trueAccepted / positives : null,
-          falseAccepted: rows
-            .filter((row) => row.accepted && row.expected !== 'entailment')
-            .map((row) => row.id),
+  const { verifier, policy } = createVerifierFromEnv();
+  try {
+    const loadStart = performance.now();
+    await verifier.prepare();
+    const loadMs = performance.now() - loadStart;
+    const start = performance.now();
+    const results = await verifier.verify(
+      dataset.map(({ premise, hypothesis }) => ({ premise, hypothesis })),
+    );
+    const elapsedMs = performance.now() - start;
+    const report = evaluateVerification(
+      dataset,
+      results,
+      policy.entailmentThreshold,
+    );
+    console.log(
+      JSON.stringify(
+        {
+          model: verifier.model,
+          revision: verifier.revision,
+          policy,
+          loadMs,
+          elapsedMs,
+          ...report,
+          note: 'Seed regression gate only. Domain calibration and live end-to-end quality remain separate release checks.',
         },
-        note: 'Small diagnostic set, not a calibrated confidence estimate or a production safety guarantee.',
-        rows,
-      },
-      null,
-      2,
-    ),
-  );
-} finally {
-  await verifier.dispose();
+        null,
+        2,
+      ),
+    );
+    if (args.includes('--check') && !report.gate.passed) process.exitCode = 1;
+  } finally {
+    await verifier.dispose();
+  }
 }
+main().catch(() => {
+  console.error(
+    'Verification evaluation failed. Check the dataset, model cache and settings.',
+  );
+  process.exitCode = 1;
+});
